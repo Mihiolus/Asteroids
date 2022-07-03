@@ -22,6 +22,7 @@ public class PauseMenu : MonoBehaviour
     }
 
     [SerializeField]
+    [TextArea]
     private string _keyboardLabel, _keyboardMouseLabel;
 
     public enum ControlSchemes { Keyboard, KeyboardMouse }
