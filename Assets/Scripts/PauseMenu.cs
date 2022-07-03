@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -20,10 +21,34 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    [SerializeField]
+    private string _keyboardLabel, _keyboardMouseLabel;
+
+    public enum ControlSchemes { Keyboard, KeyboardMouse }
+    private ControlSchemes _scheme;
+    public ControlSchemes Scheme
+    {
+        get => _scheme; set
+        {
+            _scheme = value;
+            var label = _controlsButton.GetComponent<TMP_Text>();
+            switch (_scheme)
+            {
+                case ControlSchemes.Keyboard:
+                    label.text = _keyboardLabel; break;
+                case ControlSchemes.KeyboardMouse:
+                    label.text = _keyboardMouseLabel; break;
+            }
+        }
+    }
+    [SerializeField]
+    private ControlSchemes _defaultScheme;
+
     private void Awake()
     {
         Instance = this;
         IsGameStarted = false;
+        Scheme = _defaultScheme;
     }
 
     public void OnContinue()
@@ -68,7 +93,7 @@ public class PauseMenu : MonoBehaviour
 
     public void OnControls()
     {
-
+        Scheme = Scheme == ControlSchemes.Keyboard ? ControlSchemes.KeyboardMouse : ControlSchemes.Keyboard;
     }
 
     public void OnExit()
