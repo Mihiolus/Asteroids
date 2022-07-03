@@ -45,11 +45,11 @@ public class Player : MonoBehaviour
         switch (PauseMenu.Instance.Scheme)
         {
             case PauseMenu.ControlSchemes.Keyboard:
-                if (Input.GetKey(KeyCode.A))
+                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
                 {
                     transform.Rotate(Vector3.forward * _angularSpeed * Time.deltaTime);
                 }
-                if (Input.GetKey(KeyCode.D))
+                if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
                 {
                     transform.Rotate(Vector3.back * _angularSpeed * Time.deltaTime);
                 }
