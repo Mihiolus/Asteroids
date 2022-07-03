@@ -41,20 +41,43 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.W))
+        //Turning
+        switch (PauseMenu.Instance.Scheme)
+        {
+            case PauseMenu.ControlSchemes.Keyboard:
+                if (Input.GetKey(KeyCode.A))
+                {
+                    transform.Rotate(Vector3.forward * _angularSpeed * Time.deltaTime);
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    transform.Rotate(Vector3.back * _angularSpeed * Time.deltaTime);
+                }
+                break;
+            case PauseMenu.ControlSchemes.KeyboardMouse:
+                var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                var mouseDir = mousePos - transform.position;
+                var angle = Mathf.Atan2(mouseDir.y, mouseDir.x) * Mathf.Rad2Deg;
+                Quaternion targetRot = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.rotation =
+                    Quaternion.RotateTowards(transform.rotation, targetRot, _angularSpeed * Time.deltaTime);
+                break;
+        }
+        //Thrust control
+        if (Input.GetKey(KeyCode.W)
+            || Input.GetKey(KeyCode.UpArrow)
+            || (PauseMenu.Instance.Scheme == PauseMenu.ControlSchemes.KeyboardMouse
+            && Input.GetMouseButton(1)))
         {
             _velocity = Vector2.ClampMagnitude(_velocity + transform.right * _acceleration * Time.deltaTime, _maxSpeed);
         }
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.Rotate(Vector3.forward * _angularSpeed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(Vector3.back * _angularSpeed * Time.deltaTime);
-        }
+        //Inertial movement
         transform.position += _velocity * Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space) && _cooldownTimer <= 0)
+        //Shooting
+        if (Input.GetKeyDown(KeyCode.Space)
+            || (PauseMenu.Instance.Scheme == PauseMenu.ControlSchemes.KeyboardMouse
+            && Input.GetMouseButtonDown(0))
+            && _cooldownTimer <= 0)
         {
             var bullet = BulletManager.Instance.BulletPool.Get();
             if (bullet != null)
@@ -78,7 +101,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        GameManager.Instance.Lives --;
+        GameManager.Instance.Lives--;
         GameManager.Instance.QueueRespawn(this);
         ExplosionManager.Instance.PlaceExplosion(transform.position);
     }
