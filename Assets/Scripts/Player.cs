@@ -63,6 +63,8 @@ public class Player : MonoBehaviour
                     Quaternion.RotateTowards(transform.rotation, targetRot, _angularSpeed * Time.deltaTime);
                 break;
         }
+
+        bool isThrusting = false;
         //Thrust control
         if (Input.GetKey(KeyCode.W)
             || Input.GetKey(KeyCode.UpArrow)
@@ -70,7 +72,10 @@ public class Player : MonoBehaviour
             && Input.GetMouseButton(1)))
         {
             _velocity = Vector2.ClampMagnitude(_velocity + transform.right * _acceleration * Time.deltaTime, _maxSpeed);
+            isThrusting = true;
         }
+        SFXPlayer.Instance.PlayingThrust = isThrusting;
+
         //Inertial movement
         transform.position += _velocity * Time.deltaTime;
         //Shooting
@@ -80,14 +85,12 @@ public class Player : MonoBehaviour
             && _cooldownTimer <= 0)
         {
             var bullet = BulletManager.Instance.BulletPool.Get();
-            if (bullet != null)
-            {
-                bullet.transform.position = _turret.position;
-                bullet.Direction = transform.right;
-                _cooldownTimer = _cooldown;
-                bullet.GetComponent<SpriteRenderer>().color = _bulletColor;
-                bullet.Origin = Bullet.Origins.Player;
-            }
+            bullet.transform.position = _turret.position;
+            bullet.Direction = transform.right;
+            _cooldownTimer = _cooldown;
+            bullet.GetComponent<SpriteRenderer>().color = _bulletColor;
+            bullet.Origin = Bullet.Origins.Player;
+            SFXPlayer.Instance.PlaySound(SFXPlayer.SoundTypes.Fire);
         }
         if (_cooldownTimer > 0)
         {
@@ -102,7 +105,11 @@ public class Player : MonoBehaviour
             return;
         }
         GameManager.Instance.Lives--;
-        GameManager.Instance.QueueRespawn(this);
+        if (GameManager.Instance.Lives > 0)
+        {
+            GameManager.Instance.QueueRespawn(this);
+        }
+        SFXPlayer.Instance.PlayingThrust = false;
         ExplosionManager.Instance.PlaceExplosion(transform.position);
     }
 

@@ -32,6 +32,17 @@ public class Asteroid : MonoBehaviour
         {
             IsCompeletelyDestroyed = true;
         }
+        switch(Size){
+            case AsteroidManager.AsteroidSize.Big:
+            SFXPlayer.Instance.PlaySound(SFXPlayer.SoundTypes.ExplosionBig);
+            break;
+            case AsteroidManager.AsteroidSize.Mid:
+            SFXPlayer.Instance.PlaySound(SFXPlayer.SoundTypes.ExplosionMid);
+            break;
+            case AsteroidManager.AsteroidSize.Small:
+            SFXPlayer.Instance.PlaySound(SFXPlayer.SoundTypes.ExplosionSmall);
+            break;
+        }
         MotherPool.Release(this);
         ExplosionManager.Instance.PlaceExplosion(transform.position);
     }
