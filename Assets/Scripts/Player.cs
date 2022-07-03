@@ -109,6 +109,10 @@ public class Player : MonoBehaviour
         {
             GameManager.Instance.QueueRespawn(this);
         }
+        else
+        {
+            GameManager.Instance.Gameover(this);
+        }
         SFXPlayer.Instance.PlayingThrust = false;
         ExplosionManager.Instance.PlaceExplosion(transform.position);
     }

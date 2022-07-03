@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField]
-    private float _respawnCooldown = 5f;
+    private float _respawnCooldown = 5f, _gameoverDelay = 2f;
     [SerializeField]
     private UFO _ufo;
     [SerializeField]
@@ -74,12 +74,14 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        if(!_HUD){
+        if (!_HUD)
+        {
             _HUD = GameObject.Find("HUD");
-        }        
+        }
     }
-    
-    public void Init(){
+
+    public void Init()
+    {
         Score = 0;
         Lives = _startingLives;
         Difficulty = 0;
@@ -117,6 +119,19 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(_respawnCooldown);
         player.gameObject.SetActive(true);
         player.Respawn();
+    }
+
+    public void Gameover(Player player)
+    {
+        StartCoroutine(QueueGameover(player));
+    }
+
+    private IEnumerator QueueGameover(Player player)
+    {
+        player.gameObject.SetActive(false);
+        yield return new WaitForSeconds(_gameoverDelay);
+        Mode = GameModes.Pause;
+        PauseMenu.GetComponent<PauseMenu>().IsGameStarted = false;
     }
 
     private void Update()
