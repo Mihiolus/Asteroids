@@ -66,10 +66,11 @@ public class Player : MonoBehaviour
 
         bool isThrusting = false;
         //Thrust control
-        if (Input.GetKey(KeyCode.W)
+        if (GameManager.Instance.Mode == GameManager.GameModes.Play
+            && (Input.GetKey(KeyCode.W)
             || Input.GetKey(KeyCode.UpArrow)
             || (PauseMenu.Instance.Scheme == PauseMenu.ControlSchemes.KeyboardMouse
-            && Input.GetMouseButton(1)))
+            && Input.GetMouseButton(1))))
         {
             _velocity = Vector2.ClampMagnitude(_velocity + transform.right * _acceleration * Time.deltaTime, _maxSpeed);
             isThrusting = true;
@@ -79,10 +80,11 @@ public class Player : MonoBehaviour
         //Inertial movement
         transform.position += _velocity * Time.deltaTime;
         //Shooting
-        if (Input.GetKeyDown(KeyCode.Space)
+        if (GameManager.Instance.Mode == GameManager.GameModes.Play
+            && (Input.GetKeyDown(KeyCode.Space)
             || (PauseMenu.Instance.Scheme == PauseMenu.ControlSchemes.KeyboardMouse
             && Input.GetMouseButtonDown(0))
-            && _cooldownTimer <= 0)
+            && _cooldownTimer <= 0))
         {
             var bullet = BulletManager.Instance.BulletPool.Get();
             bullet.transform.position = _turret.position;

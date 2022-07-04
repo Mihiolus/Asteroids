@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXPlayer : MonoBehaviour
 {
     public static SFXPlayer Instance;
     [SerializeField]
-    private AudioClip _thrust, _explosionSmall, _explosionMid, _explosionBig, _fire;
+    private AudioClip _explosionSmall, _explosionMid, _explosionBig, _fire;
     private AudioSource _source;
     [SerializeField]
     private AudioSource _thrustSource;
