@@ -13,9 +13,10 @@ public class AsteroidManager : MonoBehaviour
     private int _startNumber = 2;
     [SerializeField]
     private float _minSpeed = 1f, _maxSpeed = 5f,
-    _repopulateCooldown = 2f;
+    _repopulateCooldown = 2f, _fragmentVelocityAngle = 45;
 
-    private void Awake() {
+    private void Awake()
+    {
         Instance = this;
         _asteroidBigPool = new ObjectPool<Asteroid>(CreateBig, GetAsteroid, ReleaseAsteroid, DestroyAsteroid, false);
         _asteroidMidPool = new ObjectPool<Asteroid>(CreateMid, GetAsteroid, ReleaseAsteroid, DestroyAsteroid, false);
@@ -76,13 +77,13 @@ public class AsteroidManager : MonoBehaviour
     private void GetAsteroid(Asteroid a)
     {
         a.gameObject.SetActive(true);
-        a.transform.rotation = Quaternion.AngleAxis(Random.Range(0,360),Vector3.forward);
+        a.transform.rotation = Quaternion.AngleAxis(Random.Range(0, 360), Vector3.forward);
     }
 
     private void ReleaseAsteroid(Asteroid a)
     {
         a.gameObject.SetActive(false);
-        if (a.Size != AsteroidSize.Small&&!a.IsCompeletelyDestroyed)
+        if (a.Size != AsteroidSize.Small && !a.IsCompeletelyDestroyed)
         {
             var speed = Random.Range(_minSpeed, _maxSpeed);
             a.Velocity = a.Velocity.normalized;
@@ -90,7 +91,7 @@ public class AsteroidManager : MonoBehaviour
             {
                 Asteroid newAsteroid = a.Size == AsteroidSize.Big ? _asteroidMidPool.Get() : _asteroidSmallPool.Get();
                 newAsteroid.transform.position = a.transform.position;
-                newAsteroid.Velocity = Quaternion.AngleAxis(i * 45, Vector3.forward) * a.Velocity * speed;
+                newAsteroid.Velocity = Quaternion.AngleAxis(i * _fragmentVelocityAngle, Vector3.forward) * a.Velocity * speed;
             }
         }
         var remaining = _asteroidBigPool.CountActive + _asteroidMidPool.CountActive + _asteroidSmallPool.CountActive;
